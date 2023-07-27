@@ -1,11 +1,14 @@
 from fastapi import FastAPI
-from quiz.routes import router
+from starlette.templating import Jinja2Templates
+from auth.routes import auth
 from fastapi.staticfiles import StaticFiles
+
 
 def create_app():
     app = FastAPI()
-    router.mount("/static", StaticFiles(directory="quiz/static"), name="static")
-    app.include_router(router)
+    app.include_router(auth)
+    app.mount('/', StaticFiles(directory="static"), name="static")
     return app
 
 app = create_app()
+

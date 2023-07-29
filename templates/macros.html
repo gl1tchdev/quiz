@@ -1,0 +1,9 @@
+{% macro is_valid(name, errors) -%}
+  {% if not errors %}
+
+  {% elif name in errors %}
+  is-invalid
+  {% else %}
+  is-valid
+  {% endif %}
+{%- endmacro  %}

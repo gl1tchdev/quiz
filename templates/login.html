@@ -1,4 +1,3 @@
-{% import 'forms.html' as forms %}
 {% extends 'layout.html'%}
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', path='/auth/css/style.css') }}">
@@ -11,14 +10,27 @@
         <div class="card bg-dark text-white" style="border-radius: 1rem;">
           <div class="card-body p-5 text-center">
             <div class="mb-md-5 mt-md-4">
-              <h2 class="fw-bold mb-6 text-uppercase">Login</h2>
-
-             <form method="POST" action="{{url_for('login_post')}}">
-                 {{ forms.input('text', 'form-outline form-white mb-4', 'form-control', 'Login', 'typeText') }}
-                 {{ forms.input('password', 'form-outline form-white mb-4', 'form-control form-control-lg', 'Password', 'typePassword') }}
-                 {{ forms.button('btn btn-outline-light btn-lg px-5', 'Login') }}
-             </form>
-
+              <h2 class="fw-bold mb-4 text-uppercase">LOGIN</h2>
+                {% if errors %}
+                    {% for error in errors %}
+                    {{ error }}
+                    {% endfor %}
+                {% endif %}
+                 <form method="POST" action="{{url_for('login_post')}}">
+                  <div class="form-outline form-white mb-4">
+                      <input type="text" id="typeLogin" name="login" class="form-control form-control-lg" value="{{ login }}" required />
+                      <label class="form-label" for="typeLogin">Login</label>
+                      <div class="invalid-feedback">Login must be between 3 and 8 characters in lower case, and must not be equal to the password</div>
+                      <div class="valid-feedback">Looks right</div>
+                  </div>
+                 <div class="form-outline form-white mb-4">
+                      <input type="password" id="typePassword" name="password" class="form-control form-control-lg" value="{{ password }}" required />
+                      <label class="form-label" for="typePassword">Password</label>
+                     <div class="invalid-feedback">Password must be between 3 and 8 characters in lower case, must not be equal to the login</div>
+                     <div class="valid-feedback">Looks right</div>
+                 </div>
+                     <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+                 </form>
             </div>
             <div>
               <p class="mb-0">Don't have an account? <a href="{{url_for('signup_get')}}" class="text-white-50 fw-bold">Sign Up</a>

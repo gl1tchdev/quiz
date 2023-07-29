@@ -1,5 +1,9 @@
-from fastapi.templating import Jinja2Templates
+from db.database import SessionLocal
 
-prepare_context = lambda request: {'request': request}
-templates = Jinja2Templates('templates')
-get_template = lambda name, context: templates.TemplateResponse(name, context)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

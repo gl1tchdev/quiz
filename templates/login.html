@@ -1,3 +1,4 @@
+{% import 'macros.html' as tools %}
 {% extends 'layout.html'%}
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', path='/auth/css/style.css') }}">
@@ -11,22 +12,20 @@
           <div class="card-body p-5 text-center">
             <div class="mb-md-5 mt-md-4">
               <h2 class="fw-bold mb-4 text-uppercase">LOGIN</h2>
-                {% if errors %}
-                    {% for error in errors %}
-                    {{ error }}
-                    {% endfor %}
+                {% if request.query_params['registered'] == 'True' %}
+                <p class="text-white-50 mb-5">You are registered. Log in now</p>
                 {% endif %}
                  <form method="POST" action="{{url_for('login_post')}}">
                   <div class="form-outline form-white mb-4">
-                      <input type="text" id="typeLogin" name="login" class="form-control form-control-lg" value="{{ login }}" required />
+                      <input type="text" id="typeLogin" name="login" class="form-control form-control-lg {{ tools.is_valid('login', errors) }}" value="{{ login }}" required />
                       <label class="form-label" for="typeLogin">Login</label>
-                      <div class="invalid-feedback">Login must be between 3 and 8 characters in lower case, and must not be equal to the password</div>
+                      <div class="invalid-feedback">User does not exist</div>
                       <div class="valid-feedback">Looks right</div>
                   </div>
                  <div class="form-outline form-white mb-4">
-                      <input type="password" id="typePassword" name="password" class="form-control form-control-lg" value="{{ password }}" required />
+                      <input type="password" id="typePassword" name="password" class="form-control form-control-lg {{ tools.is_valid('password', errors) }}" value="{{ password }}" required />
                       <label class="form-label" for="typePassword">Password</label>
-                     <div class="invalid-feedback">Password must be between 3 and 8 characters in lower case, must not be equal to the login</div>
+                     <div class="invalid-feedback">Password is wrong</div>
                      <div class="valid-feedback">Looks right</div>
                  </div>
                      <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>

@@ -26,6 +26,11 @@ class UserCreate(UserBase):
         return self
 
 
+class UserLogin(BaseModel):
+    login: str
+    password: str
+
+
 class User(UserBase):
     id: int
     points: int

@@ -1,0 +1,6 @@
+.gitignore
+venv
+.idea
+quiz/__init__.py
+db/sql_app.db
+test_main.http

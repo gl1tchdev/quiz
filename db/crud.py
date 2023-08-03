@@ -15,6 +15,10 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
+def get_user_by_hash(db: Session, hash: str):
+    return db.query(models.User).filter(models.User.hashed_password == hash).first()
+
+
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = password.get_password_hash(user.password)
     db_user = models.User(login=user.login, hashed_password=hashed_password)

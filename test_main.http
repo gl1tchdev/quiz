@@ -19,3 +19,6 @@ POST http://127.0.0.1:8000/auth/signup
 Content-Type: application/x-www-form-urlencoded
 
 login=abobas&password=aboba&password3=abobad
+###
+GET http://127.0.0.1:8000/
+Accept: application/json

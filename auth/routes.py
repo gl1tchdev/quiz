@@ -15,25 +15,21 @@ auth = APIRouter(prefix='/auth')
 @auth.get('/')
 async def start(request: Request, hash: Annotated[Union[str, None], Cookie()] = None):
     if hash:
-        return RedirectResponse(request.url_for('lobby'))
+        return RedirectResponse(request.url_for('lobby_get'))
     else:
         return RedirectResponse(request.url_for('login_get'))
 
 
 @auth.get("/login", response_class=HTMLResponse)
-async def login_get(request: Request, hash: Annotated[Union[str, None], Cookie()] = None):
+async def login_get(request: Request):
     context = prepare_context(request)
-    if hash:
-        return RedirectResponse(request.url_for('lobby'))
     context.update({'title': 'Login'})
     return get_template('login.html', context)
 
 
 @auth.get("/signup", response_class=HTMLResponse)
-async def signup_get(request: Request, hash: Annotated[Union[str, None], Cookie()] = None):
+async def signup_get(request: Request):
     context = prepare_context(request)
-    if hash:
-        return RedirectResponse(request.url_for('lobby'))
     context.update({'title': 'Sign up'})
     return get_template('signup.html', context)
 
@@ -50,7 +46,7 @@ async def login_post(request: Request, db: Session = Depends(get_db)):
         else:
             valid = verify_password(user.password, db_user.hashed_password)
             if valid:
-                response = RedirectResponse(request.url_for('lobby'))
+                response = RedirectResponse(request.url_for('lobby_post'))
                 response.set_cookie(key='hash', value=db_user.hashed_password)
                 return response
             else:

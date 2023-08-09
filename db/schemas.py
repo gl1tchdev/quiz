@@ -1,6 +1,8 @@
 from pydantic import (BaseModel,
                       constr,
                       model_validator)
+from typing import Optional
+from dependencies import get_db
 
 
 class UserBase(BaseModel):
@@ -39,7 +41,16 @@ class User(UserBase):
         from_attributes = True
 
 
-class QuizCreate(UserBase):
+class QuizCreate(BaseModel):
     title: str
-    description: str
+    description: Optional[str]
     author_id: int
+
+    @model_validator(mode='after')
+    def title_is_unique(self) -> 'QuizCreate':
+        from db.crud import get_quiz_by_title
+        db = next(get_db())
+        quiz = get_quiz_by_title(db, self.title)
+        if quiz:
+            raise ValueError('title')
+        return self

@@ -28,8 +28,12 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def create_quiz(db: Session, user: schemas.User, quiz: schemas.QuizCreate):
-    db_quiz = models.Quiz(title=quiz.title, description=quiz.description, author_id=user.id)
+def get_quiz_by_title(db: Session, title: str):
+    return db.query(models.Quiz).filter(models.Quiz.title == title).first()
+
+
+def create_quiz(db: Session, quiz: schemas.QuizCreate):
+    db_quiz = models.Quiz(title=quiz.title, description=quiz.description, author_id=quiz.author_id)
     db.add(db_quiz)
     db.commit()
     db.refresh(db_quiz)

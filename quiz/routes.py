@@ -41,22 +41,30 @@ async def search(request: Request):
     return get_template("lobby.html", context)
 
 
+@quiz.get('/create', response_class=HTMLResponse)
+async def create_quiz_get(request: Request):
+    context = prepare_context(request)
+    return get_template("create_quiz.html", context)
+
+
 @quiz.post('/create', response_class=HTMLResponse)
-async def create_quiz(request: Request, db: Session = Depends(get_db)):
+async def create_quiz_post(request: Request, db: Session = Depends(get_db)):
     context = prepare_context(request)
     cookie = request.cookies.get('hash')
     user = get_user_by_hash(db, cookie)
     form = await form_to_obj(request)
     try:
-        input_quiz = QuizCreate(**form)
-        db_quiz = create_quiz(db, user, input_quiz)
-        response = RedirectResponse(request.url_for('create_questions').include_query_params(id=db_quiz.id))
+        input_quiz = QuizCreate(**form, author_id=user.id)
+        db_quiz = create_quiz(db, input_quiz)
+        response = RedirectResponse(request.url_for('create_question').include_query_params(id=db_quiz.id))
         return response
     except ValidationError as exc:
         context.update({'errors': [loc_by_exception(error) for error in exc.errors()]})
+        context.update(**form)
     return get_template("create_quiz.html", context)
 
 
 @quiz.post('/create/questions', response_class=HTMLResponse)
-async def create_questions(request: Request):
-    pass
+async def create_question(request: Request):
+    context = prepare_context(request)
+    return get_template("create_question.html", context)

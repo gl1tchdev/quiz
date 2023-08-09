@@ -26,3 +26,11 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def create_quiz(db: Session, user: schemas.User, quiz: schemas.QuizCreate):
+    db_quiz = models.Quiz(title=quiz.title, description=quiz.description, author_id=user.id)
+    db.add(db_quiz)
+    db.commit()
+    db.refresh(db_quiz)
+    return db_quiz

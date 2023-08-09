@@ -37,3 +37,9 @@ class User(UserBase):
 
     class Config:
         from_attributes = True
+
+
+class QuizCreate(UserBase):
+    title: str
+    description: str
+    author_id: int

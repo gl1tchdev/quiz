@@ -23,14 +23,14 @@ async def start(request: Request, hash: Annotated[Union[str, None], Cookie()] = 
 @auth.get("/login", response_class=HTMLResponse)
 async def login_get(request: Request):
     context = prepare_context(request)
-    context.update({'title': 'Login'})
+    context.update({'page_title': 'Login'})
     return get_template('login.html', context)
 
 
 @auth.get("/signup", response_class=HTMLResponse)
 async def signup_get(request: Request):
     context = prepare_context(request)
-    context.update({'title': 'Sign up'})
+    context.update({'page_title': 'Sign up'})
     return get_template('signup.html', context)
 
 
@@ -54,7 +54,7 @@ async def login_post(request: Request, db: Session = Depends(get_db)):
     except ValidationError:
         pass
     context.update(**form)
-    context.update({'title': 'Login'})
+    context.update({'page_title': 'Login'})
     return get_template('login.html', context)
 
 
@@ -75,7 +75,7 @@ async def signup_post(request: Request, db: Session = Depends(get_db)):
     except ValidationError as exc:
         context.update({'errors': [loc_by_exception(error) for error in exc.errors()]})
     context.update(**form)
-    context.update({'title': 'Sign up'})
+    context.update({'page_title': 'Sign up'})
     return get_template('signup.html', context)
 
 

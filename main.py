@@ -1,11 +1,10 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from auth.routes import auth
 from quiz.routes import quiz
-from db import models, crud
+from db import models
 from db.database import engine
-from tools import *
 
 
 def create_app():

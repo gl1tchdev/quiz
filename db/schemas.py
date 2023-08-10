@@ -54,3 +54,14 @@ class QuizCreate(BaseModel):
         if quiz:
             raise ValueError('title')
         return self
+
+
+class QuestionCreate(BaseModel):
+    text: str
+    quiz_id: int
+
+
+class AnswerCreate(BaseModel):
+    text: str
+    question_id: int
+    is_correct: bool

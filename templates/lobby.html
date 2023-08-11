@@ -13,6 +13,9 @@
               </button>
               </div>
               <p class="fw-bold fs-1 text-center mb-2">Hello, {{ user.login if user }}</p>
+              {% if created %}
+              <p class="fs-5 text-center mb-1 fw-lighter">Congrats! Quiz created</p>
+              {% endif %}
               <div class="d-flex justify-content-center row pr-5 pl-5">
                   <form method="POST" action="{{ url_for('search') }}">
               <div class="input-group">

@@ -50,7 +50,6 @@ def get_questions_by_quiz_id(db: Session, quiz_id: int):
     return db.query(models.Question).filter(models.Question.quiz_id == quiz_id).all()
 
 
-# need commit manually
 def create_question(db: Session, question: schemas.QuestionCreate, quiz_id: int):
     db_question = models.Question(text=question.text, quiz_id=quiz_id)
     db.add(db_question)
@@ -59,7 +58,6 @@ def create_question(db: Session, question: schemas.QuestionCreate, quiz_id: int)
     return db_question
 
 
-# need commit manually
 def create_answers(db: Session, answers: List[schemas.AnswerCreate], question_id: int):
     db_answers = []
     for answer in answers:

@@ -29,7 +29,7 @@ class Answer(Base):
     __tablename__ = 'answers'
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String)
-    question_id = Column(String, ForeignKey('questions.id'), primary_key=True)
+    question_id = Column(String, ForeignKey('questions.id'))
     is_correct = Column(Boolean)
 
 

@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends, Request
-from sqlalchemy.orm import Session
 from fastapi.responses import RedirectResponse, HTMLResponse
 from pydantic import ValidationError
 from dependencies import get_db
 from db.schemas import QuizCreate, QuestionCreate, AnswerCreate
-from db.crud import create_quiz, get_user_by_hash, get_quiz_by_id, get_questions_by_quiz_id
+from db.crud import *
 from tools import *
 
 quiz = APIRouter(prefix='/quiz')
@@ -25,12 +24,16 @@ async def lobby_get(request: Request, db: Session = Depends(get_db)):
     cookie = request.cookies.get('hash')
     user = get_user_by_hash(db, cookie)
     context.update({'user': user})
+    if request.query_params.get('created'):
+        context.update({'created': True})
     return get_template("lobby.html", context)
 
 
 @quiz.post('/', response_class=HTMLResponse)
-async def lobby_post(request: Request, db: Session = Depends(get_db)):
+async def lobby_post(request: Request):
     context = prepare_context(request)
+    if request.query_params.get('created'):
+        context.update({'created': True})
     return get_template("lobby.html", context)
 
 
@@ -86,16 +89,32 @@ async def create_question_post(request: Request, db: Session = Depends(get_db)):
     quiz_id = request.query_params.get('quiz_id')
     if not quiz_id:
         return back
-    quiz = get_quiz_by_id(db, int(quiz_id))
+    quiz_id = int(quiz_id)
+    quiz = get_quiz_by_id(db, quiz_id)
     if not quiz:
         return back
-    questions = get_questions_by_quiz_id(db, quiz_id)
     form = await form_to_obj(request)
     checked = any('check' in key for key in form.keys())
     if checked:
+        form_dict = question_form_to_dict(form)
+        question_text = form_dict[0]
+        question_schema = QuestionCreate(text=question_text, quiz_id=quiz_id)
+        db_question = create_question(db, question_schema, quiz_id)
+        answers_dict = form_dict[1]
+        answers = []
+        for answer in answers_dict:
+            answer_schema = AnswerCreate(text=answer['text'], question_id=db_question.id, is_correct=answer['is_correct'])
+            answers.append(answer_schema)
+        db_answers = create_answers(db, answers, db_question.id)
         context.update({"success": True})
+
     else:
         context.update({"error": True})
     context.update({'quiz_id': quiz_id})
-    context.update({'count': len(questions)})
+    questions = get_questions_by_quiz_id(db, quiz_id)
+    question_len = len(questions)
+    if question_len == 5:
+        return RedirectResponse(request.url_for('lobby_get').include_query_params(created=True))
+    else:
+        context.update({'count': len(questions)})
     return get_template("create_question.html", context)

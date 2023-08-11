@@ -15,10 +15,8 @@ def loc_by_exception(error):
     return error['loc'][0] if error['type'].startswith('string') else error['msg'].replace('Value error, ', '')
 
 
-# {'check1': 'true', 'answer1': 'asd', 'answer2': 'asd'}
-def process_form_to_dict(form):
-    # TODO: think about data structures
-    '''
+# worst algo
+def question_form_to_dict(form):
     question = form.pop('question')
     answers = []
     for key in form:
@@ -26,14 +24,16 @@ def process_form_to_dict(form):
             continue
         index = int(key[-1])
         answers.append({
-            index: {
-                'text': '',
-                'is_correct': True
-            }
+            'answer_id': index,
+            'text': '',
+            'is_correct': False
         })
-    for key, value in form.items():
-        if 'check' in key:
-            answers
-    print(form)
+    for form_key, form_value in form.items():
+        index = int(form_key[-1])
+        for answer in answers:
+            if index == answer['answer_id']:
+                if 'check' in form_key:
+                    answer['is_correct'] = True
+                else:
+                    answer['text'] = form_value
     return [question, answers]
-    '''

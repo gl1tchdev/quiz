@@ -25,6 +25,8 @@ function spawnAnswer(num = 0) {
     elem.style.height = "2rem";
     elem.innerHTML = "<p class=\"text-center fs-4 fw-light pt-2\">Put your answers here and mark right:</p>";
     place.appendChild(elem);
+    let qbutton = document.getElementById('expandAnswer');
+    qbutton.style.display = 'none';
   }
   if (window.counter > 0 && !window.button_spawned) {
     let elem = document.createElement('div');
@@ -39,7 +41,11 @@ function spawnAnswer(num = 0) {
     frm.appendChild(elem);
     window.button_spawned = true;
   }
-    if (window.counter > 4) return;
+    if (window.counter > 4) {
+      let el = document.getElementById('expand' + window.counter);
+      el.style.display = 'none';
+      return;
+    }
       let ans = document.createElement('div');
       ans.classList.add('answer');
       ans.classList.add('pt-4');
@@ -51,13 +57,15 @@ function spawnAnswer(num = 0) {
           "                        <input class=\"form-check-input mt-0\" name=\"check"+ window.counter + "\" value=\"true\" type=\"checkbox\" />\n" +
           "                    </div>\n" +
           "                    <input name=\"answer" + window.counter + "\" type=\"text\" placeholder=\"Answer\" aria-describedby=\"check1\" class=\"border form-control form-icon-trailing\" required />\n" +
-          "                          <button type=\"button\" onclick=\"spawnAnswer(" + window.counter + ")\" class=\"btn btn-light\">\n" +
+          "                          <button type=\"button\" id=\"expand" + window.counter + "\" onclick=\"spawnAnswer(" + window.counter + ")\" class=\"btn btn-light\">\n" +
           "                      <i class=\"fas fa-arrow-down-long\"></i>\n" +
           "                    </button>\n" +
           "                      </div>\n" +
           "                  </div>\n" +
           "              </div>\n" +
           "                    </div>"
-      ans.innerHTML = code;
+      ans.innerHTML = code
       place.appendChild(ans);
+      let prev = document.getElementById('expand' + (window.counter - 1));
+      prev.style.display = 'none';
 }

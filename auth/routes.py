@@ -3,7 +3,6 @@ from fastapi.responses import RedirectResponse, HTMLResponse
 from sqlalchemy.orm import Session
 from pydantic import ValidationError
 from typing import Annotated, Union
-
 from dependencies import *
 from tools import *
 from db import schemas, crud

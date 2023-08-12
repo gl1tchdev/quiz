@@ -15,6 +15,12 @@ async def lobby_post(request: Request, db: Session = Depends(get_db)):
     cookie = request.cookies.get('hash')
     user = get_user_by_hash(db, cookie)
     context.update({'user': user})
+    context.update({'page_title': 'Lobby'})
+    if request.query_params.get('created'):
+        context.update({'created': True})
+    quiz_list = get_quiz_list(db)
+    if len(quiz_list) != 0:
+        context.update({'quiz_list': quiz_list})
     return get_template("lobby.html", context)
 
 
@@ -26,6 +32,10 @@ async def lobby_get(request: Request, db: Session = Depends(get_db)):
     context.update({'user': user})
     if request.query_params.get('created'):
         context.update({'created': True})
+    context.update({'page_title': 'Lobby'})
+    quiz_list = get_quiz_list(db)
+    if len(quiz_list) != 0:
+        context.update({'quiz_list': quiz_list})
     return get_template("lobby.html", context)
 
 
@@ -34,18 +44,21 @@ async def lobby_post(request: Request):
     context = prepare_context(request)
     if request.query_params.get('created'):
         context.update({'created': True})
+    context.update({'page_title': 'Lobby'})
     return get_template("lobby.html", context)
 
 
 @quiz.post('/search', response_class=HTMLResponse)
 async def search(request: Request):
     context = prepare_context(request)
+    context.update({'page_title': 'Lobby'})
     return get_template("lobby.html", context)
 
 
 @quiz.get('/create', response_class=HTMLResponse)
 async def create_quiz_get(request: Request):
     context = prepare_context(request)
+    context.update({'page_title': 'Create quiz'})
     return get_template("create_quiz.html", context)
 
 
@@ -58,11 +71,12 @@ async def create_quiz_post(request: Request, db: Session = Depends(get_db)):
     try:
         input_quiz = QuizCreate(**form, author_id=user.id)
         db_quiz = create_quiz(db, input_quiz)
-        response = RedirectResponse(request.url_for('create_question').include_query_params(quiz_id=db_quiz.id))
+        response = RedirectResponse(request.url_for('create_question_get').include_query_params(quiz_id=db_quiz.id))
         return response
     except ValidationError as exc:
         context.update({'errors': [loc_by_exception(error) for error in exc.errors()]})
         context.update(**form)
+    context.update({'page_title': 'Create quiz'})
     return get_template("create_quiz.html", context)
 
 
@@ -72,13 +86,17 @@ async def create_question_get(request: Request, db: Session = Depends(get_db)):
     quiz_id = request.query_params.get('quiz_id')
     if not quiz_id:
         return back
-    quiz = get_quiz_by_id(db, int(quiz_id))
+    quiz_id = int(quiz_id)
+    quiz = get_quiz_by_id(db, quiz_id)
     if not quiz:
         return back
     questions = get_questions_by_quiz_id(db, quiz_id)
+    if len(questions) == 5:
+        return back
     context = prepare_context(request)
     context.update({'quiz_id': quiz_id})
     context.update({'count': len(questions)})
+    context.update({'page_title': 'Create question'})
     return get_template("create_question.html", context)
 
 
@@ -92,6 +110,9 @@ async def create_question_post(request: Request, db: Session = Depends(get_db)):
     quiz_id = int(quiz_id)
     quiz = get_quiz_by_id(db, quiz_id)
     if not quiz:
+        return back
+    questions = get_questions_by_quiz_id(db, quiz_id)
+    if len(questions) == 5:
         return back
     form = await form_to_obj(request)
     checked = any('check' in key for key in form.keys())
@@ -117,4 +138,10 @@ async def create_question_post(request: Request, db: Session = Depends(get_db)):
         return RedirectResponse(request.url_for('lobby_get').include_query_params(created=True))
     else:
         context.update({'count': len(questions)})
+    context.update({'page_title': 'Create question'})
     return get_template("create_question.html", context)
+
+
+@quiz.get('/show', response_class=HTMLResponse)
+def show_quiz_get(request: Request):
+    pass

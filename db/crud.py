@@ -30,6 +30,10 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
+def get_quiz_list(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.Quiz).offset(skip).limit(limit).all()
+
+
 def get_quiz_by_title(db: Session, title: str):
     return db.query(models.Quiz).filter(models.Quiz.title == title).first()
 

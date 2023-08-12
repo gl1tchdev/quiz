@@ -7,7 +7,7 @@
       <div class="col-12 col-md-8 col-lg-6 col-xl-5">
         <div class="card bg-dark text-white" style="border-radius: 1rem;">
           <div class="card-body p-5 text-center">
-            <div class="mb-md-5 mt-md-4">
+            <div class="mt-md-4">
               <h2 class="fw-bold mb-4 text-uppercase">login</h2>
                 {% if request.query_params['registered'] == 'True' %}
                 <p class="text-white-50 mb-5">You are registered. Log in now</p>
@@ -25,7 +25,7 @@
                      <div class="invalid-feedback">Password is wrong</div>
                      <div class="valid-feedback">Looks right</div>
                  </div>
-                     <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+                     <button class="btn btn-outline-light btn-lg px-5 mb-4" type="submit">Login</button>
                  </form>
             </div>
             <div>

@@ -32,3 +32,37 @@ background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 
     animation: 1s fadeIn;
     animation-fill-mode: forwards;
 }
+@keyframes lightUp {
+    from {
+        background: rgba(51, 45, 45)
+    }
+    to {
+        background: rgb(255, 255, 255)
+    }
+}
+@keyframes textLightUp {
+    from {
+        color: rgba(255, 255, 255);
+    }
+    to {
+        color: rgba(0, 0, 0);
+    }
+}
+
+
+.crd {
+    background: rgba(51, 45, 45);
+}
+.crd:hover {
+    cursor: pointer;
+    animation: 0.3s lightUp;
+    animation-fill-mode: forwards;
+}
+.crd:hover .card-title {
+    animation: 0.3s textLightUp;
+    animation-fill-mode: forwards;
+}
+.crd:hover .card-body {
+    animation: 0.3s textLightUp;
+    animation-fill-mode: forwards;
+}

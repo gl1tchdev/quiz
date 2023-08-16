@@ -51,7 +51,7 @@ def create_quiz(db: Session, quiz: schemas.QuizCreate):
 
 
 def get_questions_by_quiz_id(db: Session, quiz_id: int):
-    return db.query(models.Question).filter(models.Question.quiz_id == quiz_id).all()
+    return db.query(models.Question).order_by(models.Question.id).filter(models.Question.quiz_id == quiz_id).all()
 
 
 def create_question(db: Session, question: schemas.QuestionCreate, quiz_id: int):
@@ -70,3 +70,15 @@ def create_answers(db: Session, answers: List[schemas.AnswerCreate], question_id
         db.add(db_answer)
     db.commit()
     return db_answers
+
+
+def get_answers_by_question_id(db: Session, question_id: int):
+    return db.query(models.Answer).filter(models.Answer.question_id == question_id).all()
+
+
+def create_marked(db: Session, marked_schema: schemas.MarkedBase):
+    db_marked = models.Session(quiz_id=marked_schema.quiz_id, user_id=marked_schema.user_id, question_id=marked_schema.question_id, session_id=marked_schema.session_id, marked=marked_schema.marked)
+    db.add(db_marked)
+    db.commit()
+    db.refresh(db_marked)
+    return db_marked

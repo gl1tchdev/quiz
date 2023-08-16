@@ -6,16 +6,16 @@
         <div class="card bg-dark text-white" style="border-radius: 1rem; height: auto; width: auto;">
           <div class="card-body p-4">
               <div class="d-flex justify-content-end">
-                  <p class="fs-5 fw-light mb-0">{{ count }}/5</p>
+                  <p class="fs-5 fw-light mb-0">{{ count + 1 }}/5</p>
               </div>
             <p class="fs-1 text-center card-title pl-5">Type your question</p>
-              {% if error%}
+              {% if error %}
               <p class="fs-5 text-center pl-5" style="color: red;">At least 1 check have to be marked</p>
               {% endif %}
               {% if success %}
               <p class="fs-5 text-center pl-5" style="color: green;">Good! Next question</p>
               {% endif %}
-            <form id="form" method="POST" action="{{ url_for('create_question_post').include_query_params(quiz_id=quiz_id) }}">
+            <form id="form" method="POST" action="{{ url_for('create_question_form') }}">
                 <div id="place">
                     <div class="quest">
               <div class="d-flex justify-content-center row">

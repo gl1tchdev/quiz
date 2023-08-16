@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, JSON
 from db.database import Base
 
 
@@ -34,8 +34,10 @@ class Answer(Base):
 
 
 class Session(Base):
-    __tablename__ = 'sessions'
+    __tablename__ = 'answered'
     id = Column(Integer, primary_key=True, index=True)
-    quiz_id = Column(Integer, ForeignKey('quiz.id'), primary_key=True)
+    quiz_id = Column(Integer, ForeignKey('quiz.id'))
     user_id = Column(Integer, ForeignKey('users.id'))
-    answers = Column(Integer, ForeignKey('answers.id'))
+    question_id = Column(String, ForeignKey('questions.id'))
+    session_id = Column(String)
+    marked = Column(JSON)

@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="vh-100 gradient-custom d-flex align-items-center">
+    <div class="container py-5">
+    <div class="row h-100 d-flex justify-content-center">
+        <div class="card bg-dark text-white" style="border-radius: 1rem; height: auto; width: auto;">
+          <div class="card-body p-5">
+              <p class="fs-1 fw-bold text-center mb-2">Let's take a quiz!</p>
+              <p class="fs-2 fw-bold text-center mb-2">Title: {{ quiz.title }}</p>
+              {% if quiz.description %}
+                <p class="fs-3 fw-light text-center mb-4">Description: {{ quiz.description }}</p>
+              {% endif %}
+              <div class="d-flex justify-content-end mb-2" style="height: 2rem;">
+                  <p class="fs-4 fw-light mb-3">Created by {{ author.login }}</p>
+              </div>
+              <form method="POST" action="{{ url_for('start_quiz') }}">
+                  <input type="hidden" name="quiz_id" value="{{ quiz.id }}">
+                   <input type="hidden" name="current_question" value="1">
+                  <input type="hidden" name="session_id" value="{{ session_id }}">
+                  <div class="text-center pt-4">
+                    <button class="btn btn-outline-light btn-lg px-5" style="height: auto;" type="submit">GO</button>
+                  </div>
+              </form>
+          </div>
+        </div>
+    </div>
+    </div>
+</section>
+{% endblock %}

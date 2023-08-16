@@ -31,14 +31,14 @@
               </div>
               <script type="text/javascript">
                   function quiz(id) {
-                        window.location = "{{ url_for('show_quiz_get') }}"  + '?id=' + id;
+                        window.location = "{{ url_for('show_quiz_get') }}"  + '?quiz_id=' +  id;
                   }
               </script>
-              <div class="d-flex justify-content-start w-100 pt-3">
+              <div class="d-flex flex-wrap justify-content-start w-100 pt-3">
                   {% if quiz_list %}
                     {% for quiz in quiz_list -%}
                   <div class="pe-3 pb-3">
-                    <div class="card crd border border-2 ps-2" onclick="quiz({{ quiz.id }});" style="height: 5rem; width:8rem;">
+                    <div class="card crd border border-2 ps-2" onclick="quiz({{ quiz.id }});" style="width: 8rem; height: 100%;">
                         <div class="card-title mb-1 fs-4 fw-light text-center">{{ quiz.title }}</div>
                         <div class="card-body fw-lighter p-0">{{ quiz.description }}</div>
                     </div>

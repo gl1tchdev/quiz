@@ -1,7 +1,9 @@
 from pydantic import (BaseModel,
                       constr,
-                      model_validator)
+                      model_validator, Json)
 from typing import Optional
+
+
 from dependencies import get_db
 
 
@@ -65,3 +67,11 @@ class AnswerCreate(BaseModel):
     text: str
     question_id: int
     is_correct: bool
+
+
+class MarkedBase(BaseModel):
+    quiz_id: int
+    user_id: int
+    question_id: int
+    session_id: str
+    marked: Json

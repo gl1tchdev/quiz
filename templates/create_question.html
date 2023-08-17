@@ -21,8 +21,9 @@
               <div class="d-flex justify-content-center row">
                   <div class="input-group">
                   <div class="form-outline form-white w-100">
-                    <input type="text" id="question_input" name="question" class="form-control" required />
+                    <input type="text" id="question_input" name="question" data-mdb-showcounter="true" maxlength="15" class="form-control" required />
                       <label class="form-label" for="question_input">Your question</label>
+                      <div class="form-helper"></div>
                       </div>
                       <button id="expandAnswer" type="button" onclick="spawnAnswer()" class="btn btn-light">
                       <i class="fas fa-arrow-down-long"></i>

@@ -1,6 +1,9 @@
-from fastapi import APIRouter, Depends, Request
+from pprint import pprint
+
+from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse, HTMLResponse
-from pydantic import ValidationError
+from typing import List
+from db import models
 from dependencies import get_db
 from db.schemas import QuizCreate, QuestionCreate, AnswerCreate
 from db.crud import *
@@ -200,16 +203,27 @@ async def process(request: Request, db: Session = Depends(get_db)):
                                     marked=marked)
         db_marked = create_marked(db, marked)
     except ValidationError as exc:
-        print(exc.errors())
+        return response
     if current_question > 5:
         return RedirectResponse(request.url_for('show_final'))
-    response.set_cookie(key='current_question', value=current_question)
+    response.set_cookie(key='current_question', value=str(current_question))
     return response
 
 
-@quiz.post('/show/final', response_class=HTMLResponse)
-async def show_final(request: Request):
+@quiz.post('/final', response_class=HTMLResponse)
+async def show_final(request: Request, db: Session = Depends(get_db)):
     context = prepare_context(request)
+    cookie = request.cookies.get('hash')
+    quiz_id = request.cookies.get('quiz_id')
+    quiz_id = int(quiz_id)
+    user: models.User = get_user_by_hash(db, cookie)
+    context.update({'user': user})
+    session_id = request.cookies.get('session_id')
+    user_marked: List[models.Session] = get_session_info(db, session_id)
+    output = process_quiz(db, user_marked, user)
+    context.update({'results': output})
+    context.update({'page_title': 'Quiz results'})
+    context.update({'user': user})
     response = get_template("show_final.html", context)
     response = delete_quiz_info(response)
     return response

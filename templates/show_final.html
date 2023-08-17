@@ -1,4 +1,37 @@
 {% extends "layout.html" %}
 {% block content %}
-congrats
+<section class="vh-100 gradient-custom d-flex align-items-center">
+  <div class="container py-5 h-100 d-flex align-items-center justify-content-center">
+    <div class="row" style="height: auto;">
+      <div class="card bg-dark text-white w-100" style="height: auto; border-radius: 1rem;">
+          <div class="card-body p-5" style="height: auto;">
+              <p class="fw-bold fs-1 text-center mb-2">Congratulations, {{ user.login if user }}</p>
+              <div class="d-flex flex-wrap justify-content-around pt-3" style="height: auto;">
+                    {% for result in results -%}
+                  <div class="pe-5">
+                    <div class="card default border border-3 px-2"  style="width: 100%; min-height: 15rem;">
+                        <p class="card-title mb-1 fs-4 fw-light text-center px-3">{{ results.index(result) + 1 }}. {{ result['question'] }}</p>
+                        {% for answer in result['answers'] -%}
+                          <div class="form-check mb-3 ms-2" {% if answer['is_right'] %} style="color:green;" {% endif %}>
+                            <input class="form-check-input" type="checkbox" value="" id="check{{ result['answers'].index(answer) }}" {{ 'checked' if answer['checked'] }} disabled />
+                            <label class="form-check-label text-decoration-underline" for="check{{ result['answers'].index(answer) }}">{{ answer['text'] }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                  </div>
+                    {% endfor %}
+              </div>
+              <p class="fw-light text-center pt-4 fs-1">Your score now: {{ user.points }}</p>
+            <div class="d-flex justify-content-center" style="height: 2.5rem;">
+                        <button type="button" class="btn btn-light btn-rounded" onclick="location.href=&quot;{{url_for('lobby_get')}}&quot;" data-mdb-ripple-color="dark">
+                  <i class="fas fa-arrow-right-long">
+                      Go back
+                  </i>
+              </button>
+              </div>
+            </div>
+    </div>
+  </div>
+  </div>
+</section>
 {% endblock %}

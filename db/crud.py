@@ -54,6 +54,10 @@ def get_questions_by_quiz_id(db: Session, quiz_id: int):
     return db.query(models.Question).order_by(models.Question.id).filter(models.Question.quiz_id == quiz_id).all()
 
 
+def get_question_by_id(db: Session, question_id: int):
+    return db.query(models.Question).filter(models.Question.id == question_id).first()
+
+
 def create_question(db: Session, question: schemas.QuestionCreate, quiz_id: int):
     db_question = models.Question(text=question.text, quiz_id=quiz_id)
     db.add(db_question)
@@ -76,9 +80,28 @@ def get_answers_by_question_id(db: Session, question_id: int):
     return db.query(models.Answer).filter(models.Answer.question_id == question_id).all()
 
 
+def get_answers_by_ids(db: Session, ids: List[int]):
+    return db.query(models.Answer).filter(models.Answer.id.in_(tuple(ids))).all()
+
+
 def create_marked(db: Session, marked_schema: schemas.MarkedBase):
-    db_marked = models.Session(quiz_id=marked_schema.quiz_id, user_id=marked_schema.user_id, question_id=marked_schema.question_id, session_id=marked_schema.session_id, marked=marked_schema.marked)
+    db_marked = models.Session(quiz_id=marked_schema.quiz_id, user_id=marked_schema.user_id,
+                               question_id=marked_schema.question_id, session_id=marked_schema.session_id,
+                               marked=marked_schema.marked)
     db.add(db_marked)
     db.commit()
     db.refresh(db_marked)
     return db_marked
+
+
+def get_session_info(db: Session, session: str):
+    return db.query(models.Session).filter(models.Session.session_id == session).order_by(models.Session.id).all()
+
+
+def increment_user_score(db: Session, user: models.User):
+    score = user.points or 0
+    score += 1
+    user.points = score
+    db.commit()
+    db.refresh(user)
+    return user

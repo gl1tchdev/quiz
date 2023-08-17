@@ -38,6 +38,6 @@ class Session(Base):
     id = Column(Integer, primary_key=True, index=True)
     quiz_id = Column(Integer, ForeignKey('quiz.id'))
     user_id = Column(Integer, ForeignKey('users.id'))
-    question_id = Column(String, ForeignKey('questions.id'))
+    question_id = Column(Integer, ForeignKey('questions.id'))
     session_id = Column(String)
     marked = Column(JSON)

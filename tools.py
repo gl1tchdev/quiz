@@ -1,6 +1,8 @@
 import string
+from db.crud import *
 from random import choice
-from db.models import Question
+from db import models
+from sqlalchemy.orm import Session
 from typing import List
 from fastapi import Request, Response
 from pydantic import ValidationError
@@ -63,7 +65,7 @@ def delete_quiz_info(response: Response):
     return response
 
 
-def get_answers_ids(form: dict):
+def get_answers_ids(form: dict) -> list:
     result = []
     for key, _ in form.items():
         if 'check' not in key:
@@ -73,3 +75,24 @@ def get_answers_ids(form: dict):
         result.append(index)
     return result
 
+
+def process_quiz(db: Session, user_marked: List[models.Session], user: models.User) -> list:
+    result = []
+    for marked in user_marked:
+        temp = {}
+        question = get_question_by_id(db, marked.question_id)
+        temp.update({'question': question.text})
+        answers = get_answers_by_question_id(db, question.id)
+        answers_list = []
+        for answer in answers:
+            piece = {
+                'text': answer.text,
+                'checked': True if answer.id in marked.marked else False,
+                'is_right': answer.is_correct
+            }
+            if piece['checked'] and piece['is_right']:
+                increment_user_score(db, user)
+            answers_list.append(piece)
+        temp.update({'answers': answers_list})
+        result.append(temp)
+    return result

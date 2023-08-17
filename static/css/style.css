@@ -49,6 +49,15 @@ background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 
     }
 }
 
+@keyframes wrong {
+    from {
+        color: rgb(224, 224, 224)
+    }
+    to {
+        color: rgb(204, 48, 48)
+    }
+}
+
 
 .crd {
     background: rgba(51, 45, 45);
@@ -66,3 +75,9 @@ background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 
     animation: 0.3s textLightUp;
     animation-fill-mode: forwards;
 }
+
+.default {
+    background: rgba(51, 45, 45);
+}
+
+

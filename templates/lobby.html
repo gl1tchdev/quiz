@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
-<section class="vh-100 gradient-custom">
-  <div class="container py-5 h-100">
-    <div class="row h-100">
+<section class="vh-100 gradient-custom d-flex align-items-center">
+  <div class="container py-5 h-100 d-flex align-items-center justify-content-center">
+    <div class="row">
         <div class="card bg-dark text-white w-100 h-100" style="border-radius: 1rem;">
           <div class="card-body p-5">
               <div class="d-flex justify-content-end row" style="height: 2rem;">
@@ -39,7 +39,7 @@
                     {% for quiz in quiz_list -%}
                   <div class="pe-3 pb-3">
                     <div class="card crd border border-2 ps-2" onclick="quiz({{ quiz.id }});" style="width: 8rem; height: 100%;">
-                        <div class="card-title mb-1 fs-4 fw-light text-center">{{ quiz.title }}</div>
+                        <div class="card-title mb-1 fs-5 px-3 fw-light text-center">{{ quiz.title }}</div>
                         <div class="card-body fw-lighter p-0">{{ quiz.description }}</div>
                     </div>
                   </div>

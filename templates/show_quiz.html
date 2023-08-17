@@ -21,6 +21,16 @@
                     <button class="btn btn-outline-light btn-lg px-5" style="height: auto;" type="submit">GO</button>
                   </div>
               </form>
+              {% if user.id == author.id %}
+              <form method="POST" action="{{ url_for('delete_q') }}">
+                  <input type="hidden" name="quiz_id" value="{{ quiz.id }}">
+                  <input type="hidden" name="author_id" value="{{ author.id }}">
+                  <input type="hidden" name="user_id" value="{{ user.id }}">
+              <div class="text-center pt-4">
+                    <button class="btn btn-outline-danger px-5" style="height: auto;" type="submit">DELETE</button>
+              </div>
+              </form>
+              {% endif %}
           </div>
         </div>
     </div>

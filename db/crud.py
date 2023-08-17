@@ -30,8 +30,13 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def get_quiz_list(db: Session, skip: int = 0, limit: int = 10):
-    return db.query(models.Quiz).offset(skip).limit(limit).all()
+def get_quiz_list(db: Session, skip: int = 0, limit: int = 0):
+    result = None
+    if limit > 0:
+        result = db.query(models.Quiz).offset(skip).limit(limit).all()
+    else:
+        result = db.query(models.Quiz).all()
+    return result
 
 
 def get_quiz_by_title(db: Session, title: str):
@@ -105,3 +110,14 @@ def increment_user_score(db: Session, user: models.User):
     db.commit()
     db.refresh(user)
     return user
+
+
+def delete_quiz(db: Session, quiz_id: int) -> None:
+    questions: List[models.Question] = get_questions_by_quiz_id(db, quiz_id)
+    for question in questions:
+        answers: List[models.Answer] = get_answers_by_question_id(db, question.id)
+        for answer in answers:
+            db.query(models.Answer).filter(models.Answer.id == answer.id).delete()
+        db.query(models.Question).filter(models.Question.id == question.id).delete()
+    db.query(models.Quiz).filter(models.Quiz.id == quiz_id).delete()
+    db.commit()

@@ -11,13 +11,15 @@
               <h2 class="fw-bold mb-4">Fill fields</h2>
                  <form method="POST" action="{{url_for('create_quiz_post')}}">
                   <div class="form-outline form-white mb-4">
-                      <input type="text" id="title" name="title" class="form-control form-control-lg {{ tools.is_valid('title', errors) }}" value="{{ title }}" required />
+                      <input type="text" id="title" name="title" class="form-control form-control-lg {{ tools.is_valid('title', errors) }}" value="{{ title }}"  data-mdb-showcounter="true" maxlength="15" required />
                       <label class="form-label" for="title">Quiz title</label>
+                      <div class="form-helper"></div>
                       <div class="invalid-feedback">Such quiz already exists</div>
                       <div class="valid-feedback">Looks right</div>
                   </div>
                      <div class="form-outline form-white mb-4">
-                        <textarea class="form-control" name="description" id="description" rows="2">{{ description }}</textarea>
+                        <textarea class="form-control" name="description" id="description" data-mdb-showcounter="true" maxlength="30" rows="2">{{ description }}</textarea>
+                         <div class="form-helper"></div>
                         <label class="form-label" for="description">Description</label>
                     </div>
                      <button class="btn btn-outline-light btn-lg px-5" type="submit">Create quiz</button>

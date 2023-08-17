@@ -68,7 +68,7 @@ async def signup_post(request: Request, db: Session = Depends(get_db)):
             return RedirectResponse(request.url_for('login_get').include_query_params(registered=True), status_code=303)
         else:
             db_user = crud.create_user(db, user)
-            response = RedirectResponse(request.url_for('lobby'))
+            response = RedirectResponse(request.url_for('lobby_get'))
             response.set_cookie(key='hash', value=db_user.hashed_password)
             return response
     except ValidationError as exc:

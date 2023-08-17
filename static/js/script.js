@@ -56,8 +56,9 @@ function spawnAnswer(num = 0) {
           "                      <div class=\"input-group-text\">\n" +
           "                        <input class=\"form-check-input mt-0\" name=\"check"+ window.counter + "\" value=\"true\" type=\"checkbox\" />\n" +
           "                    </div>\n" +
-          "                    <input name=\"answer" + window.counter + "\" type=\"text\" placeholder=\"Answer " + window.counter + "\" aria-describedby=\"check1\" class=\"border form-control form-icon-trailing\" required />\n" +
+          "                    <input name=\"answer" + window.counter + "\" type=\"text\" data-mdb-showcounter=\"true\" maxlength=\"10\" placeholder=\"Answer " + window.counter + "\" aria-describedby=\"check1\" class=\"border form-control form-icon-trailing\" required />\n" +
           "                          <button type=\"button\" id=\"expand" + window.counter + "\" onclick=\"spawnAnswer(" + window.counter + ")\" class=\"btn btn-light\">\n" +
+          "                     <div class=\"form-helper\"></div>" +
           "                      <i class=\"fas fa-arrow-down-long\"></i>\n" +
           "                    </button>\n" +
           "                      </div>\n" +

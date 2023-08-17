@@ -1,4 +1,6 @@
 import string
+from operator import itemgetter
+
 from db.crud import *
 from random import choice
 from db import models
@@ -8,6 +10,7 @@ from fastapi import Request, Response
 from pydantic import ValidationError
 from fastapi.templating import Jinja2Templates
 from fastapi.encoders import jsonable_encoder
+from Levenshtein import ratio
 
 prepare_context = lambda request=None, empty=False: {'request': request} if not empty else {}
 templates = Jinja2Templates('templates')
@@ -52,10 +55,14 @@ def question_form_to_dict(form: dict):
 form_has_key = lambda word, form: any(word in key for key in form.keys())
 
 
-def generate_session_id():
-    letters = string.ascii_lowercase + string.digits
-    result_str = ''.join(choice(letters) for _ in range(6))
+def generate_random_string(length: int = 6):
+    letters = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    result_str = ''.join(choice(letters) for _ in range(length))
     return result_str
+
+
+def generate_session_id():
+    return generate_random_string(6)
 
 
 def delete_quiz_info(response: Response):
@@ -96,3 +103,29 @@ def process_quiz(db: Session, user_marked: List[models.Session], user: models.Us
         temp.update({'answers': answers_list})
         result.append(temp)
     return result
+
+
+def intelligent_search(query: str, quiz_items: List[models.Quiz]):
+    temporary = []
+    for item in quiz_items:
+        temporary.append([ratio(item.title, query), item])
+    sorted_items = sorted(temporary, key=itemgetter(0))
+    sorted_items.reverse()
+    result = [quiz[1] for quiz in sorted_items]
+    return result[0:5]
+
+
+# for tests
+def make_garbage(db: Session, count: int = 10, garbage_limit: int=10):
+    for i in range(count):
+        quiz = models.Quiz(title=generate_random_string(garbage_limit), description=generate_random_string(garbage_limit), author_id=1)
+        db.add(quiz)
+    db.commit()
+    return True
+
+
+def remove_garbage(db: Session, count: int = 10):
+    garbage_items = db.query(models.Quiz).order_by(models.Quiz.id.desc()).limit(count).all()
+    for item in garbage_items:
+        db.delete(item)
+    db.commit()

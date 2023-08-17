@@ -1,12 +1,7 @@
-from pprint import pprint
-
 from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse, HTMLResponse
-from typing import List
-from db import models
 from dependencies import get_db
 from db.schemas import QuizCreate, QuestionCreate, AnswerCreate
-from db.crud import *
 from tools import *
 from json import dumps
 
@@ -37,25 +32,24 @@ async def lobby_get(request: Request, db: Session = Depends(get_db)):
     if request.query_params.get('created'):
         context.update({'created': True})
     context.update({'page_title': 'Lobby'})
-    quiz_list = get_quiz_list(db)
+    quiz_list: List[models.Quiz] = get_quiz_list(db)
     if len(quiz_list) != 0:
         context.update({'quiz_list': quiz_list})
     return get_template("lobby.html", context)
 
 
-@quiz.post('/', response_class=HTMLResponse)
-async def lobby_post(request: Request):
-    context = prepare_context(request)
-    if request.query_params.get('created'):
-        context.update({'created': True})
-    context.update({'page_title': 'Lobby'})
-    return get_template("lobby.html", context)
-
-
 @quiz.post('/search', response_class=HTMLResponse)
-async def search(request: Request):
+async def search(request: Request, db: Session = Depends(get_db)):
     context = prepare_context(request)
-    context.update({'page_title': 'Lobby'})
+    cookie = request.cookies.get('hash')
+    user = get_user_by_hash(db, cookie)
+    context.update({'user': user})
+    form = await form_to_obj(request)
+    query = form['query']
+    quiz_items = get_quiz_list(db)
+    sorted_quiz_items = intelligent_search(query, quiz_items)
+    context.update({'quiz_list': sorted_quiz_items})
+    context.update({'page_title': f'Searching: {query}'})
     return get_template("lobby.html", context)
 
 
@@ -137,11 +131,13 @@ async def create_question_form(request: Request, db: Session = Depends(get_db)):
 @quiz.get('/show', response_class=HTMLResponse)
 async def show_quiz_get(request: Request, db: Session = Depends(get_db)):
     back = RedirectResponse(request.url_for('lobby_get'))
+    cookie = request.cookies.get('hash')
+    user = get_user_by_hash(db, cookie)
     quiz_id = request.query_params.get('quiz_id')
     if not quiz_id:
         return back
     quiz_id = int(quiz_id)
-    quiz = get_quiz_by_id(db, quiz_id)
+    quiz: models.Quiz = get_quiz_by_id(db, quiz_id)
     if not quiz:
         return back
     context = prepare_context(request)
@@ -149,6 +145,8 @@ async def show_quiz_get(request: Request, db: Session = Depends(get_db)):
     context.update({'quiz': quiz})
     context.update({'author': author})
     context.update({'session_id': generate_session_id()})
+    context.update({'user': user})
+    context.update({'page_title': quiz.title})
     response = get_template("show_quiz.html", context)
     response = delete_quiz_info(response)
     return response
@@ -201,8 +199,8 @@ async def process(request: Request, db: Session = Depends(get_db)):
     try:
         marked = schemas.MarkedBase(quiz_id=quiz_id, user_id=user.id, question_id=question_id, session_id=session_id,
                                     marked=marked)
-        db_marked = create_marked(db, marked)
-    except ValidationError as exc:
+        create_marked(db, marked)
+    except ValidationError:
         return response
     if current_question > 5:
         return RedirectResponse(request.url_for('show_final'))
@@ -227,3 +225,11 @@ async def show_final(request: Request, db: Session = Depends(get_db)):
     response = get_template("show_final.html", context)
     response = delete_quiz_info(response)
     return response
+
+
+@quiz.post('/delete', response_class=HTMLResponse)
+async def delete_q(request: Request, db: Session = Depends(get_db)):
+    form = await form_to_obj(request)
+    if form['user_id'] == form['author_id']:
+        delete_quiz(db, int(form['quiz_id']))
+    return RedirectResponse(request.url_for('lobby_get'))

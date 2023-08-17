@@ -3,7 +3,6 @@ from pydantic import (BaseModel,
                       model_validator, Json)
 from typing import Optional
 
-
 from dependencies import get_db
 
 
@@ -51,11 +50,11 @@ class QuizCreate(BaseModel):
     @model_validator(mode='after')
     def title_is_unique(self) -> 'QuizCreate':
         from db.crud import get_quiz_by_title
-        db = next(get_db())
-        quiz = get_quiz_by_title(db, self.title)
-        if quiz:
-            raise ValueError('title')
-        return self
+        with next(get_db()) as db:
+            quiz = get_quiz_by_title(db, self.title)
+            if quiz:
+                raise ValueError('title')
+            return self
 
 
 class QuestionCreate(BaseModel):

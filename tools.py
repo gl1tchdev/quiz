@@ -1,6 +1,5 @@
 import string
 from operator import itemgetter
-
 from db.crud import *
 from random import choice
 from db import models
@@ -14,7 +13,7 @@ from Levenshtein import ratio
 
 prepare_context = lambda request=None, empty=False: {'request': request} if not empty else {}
 templates = Jinja2Templates('templates')
-get_template = lambda name, context:  templates.TemplateResponse(name, context)
+get_template = lambda name, context: templates.TemplateResponse(name, context)
 
 
 async def form_to_obj(request: Request):
@@ -116,9 +115,10 @@ def intelligent_search(query: str, quiz_items: List[models.Quiz]):
 
 
 # for tests
-def make_garbage(db: Session, count: int = 10, garbage_limit: int=10):
+def make_garbage(db: Session, count: int = 10, garbage_limit: int = 10):
     for i in range(count):
-        quiz = models.Quiz(title=generate_random_string(garbage_limit), description=generate_random_string(garbage_limit), author_id=1)
+        quiz = models.Quiz(title=generate_random_string(garbage_limit),
+                           description=generate_random_string(garbage_limit), author_id=1)
         db.add(quiz)
     db.commit()
     return True

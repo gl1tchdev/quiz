@@ -12,10 +12,15 @@
                   </i>
               </button>
               </div>
-              <p class="fw-bold fs-1 text-center mb-2">Hello, {{ user.login if user }}</p>
+              <span class="fw-bold fs-1 text-center mb-2">
+                   Hello, {{ user.login if user }}
+                  <i class="fas fa-right-from-bracket fa-1x" style="cursor: pointer" onclick="location.href='{{ url_for('logout') }}'"></i>
+              </span>
+              <p class="fs-3 fw-light text-center">Score: {{ user.points }}</p>
               {% if created %}
               <p class="fs-5 text-center mb-1 fw-lighter">Congrats! Quiz created</p>
               {% endif %}
+              {% if quiz_list %}
               <div class="d-flex justify-content-center row pr-5 pl-5">
                   <form method="POST" action="{{ url_for('search') }}">
               <div class="input-group">
@@ -29,6 +34,7 @@
               </div>
                       </form>
               </div>
+              {% endif %}
               <script type="text/javascript">
                   function quiz(id) {
                         window.location = "{{ url_for('show_quiz_get') }}"  + '?quiz_id=' +  id;

@@ -1,7 +1,7 @@
 from typing import List
-
 from . import models, schemas
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from auth import password
 
 
@@ -31,11 +31,10 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 
 def get_quiz_list(db: Session, skip: int = 0, limit: int = 0):
-    result = None
+    query = db.query(models.Quiz)
     if limit > 0:
-        result = db.query(models.Quiz).offset(skip).limit(limit).all()
-    else:
-        result = db.query(models.Quiz).all()
+        query= query.offset(skip).limit(limit)
+    result = [quiz for quiz in query.all() if len(quiz.questions) == 5]
     return result
 
 

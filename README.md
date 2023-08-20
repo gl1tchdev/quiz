@@ -1,4 +1,5 @@
 # Install on linux
+For app installed sqlite and enabled cookies required<br>
 ``` 
 mkdir quiz
 ```

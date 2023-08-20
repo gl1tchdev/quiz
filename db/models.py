@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, JSON
+from sqlalchemy.orm import relationship
 from db.database import Base
 
 
@@ -16,6 +17,7 @@ class Quiz(Base):
     author_id = Column(Integer, ForeignKey('users.id'))
     title = Column(String, unique=True)
     description = Column(String)
+    questions = relationship("Question", back_populates="quiz")
 
 
 class Question(Base):
@@ -23,6 +25,7 @@ class Question(Base):
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String)
     quiz_id = Column(Integer, ForeignKey('quiz.id'))
+    quiz = relationship("Quiz", back_populates="questions")
 
 
 class Answer(Base):
@@ -31,7 +34,6 @@ class Answer(Base):
     text = Column(String)
     question_id = Column(String, ForeignKey('questions.id'))
     is_correct = Column(Boolean)
-
 
 class Session(Base):
     __tablename__ = 'answered'

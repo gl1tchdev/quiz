@@ -24,7 +24,7 @@ pip install -r requirements.txt
 uvicorn main:app
 ```
 ## Production
-Check this [source](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-22-04). Create ```gunicorn.conf.py```:
+Check this [source](https://www.vultr.com/docs/how-to-deploy-fastapi-applications-with-gunicorn-and-nginx-on-ubuntu-20-04/). Create ```gunicorn.conf.py```:
 ```python
 from multiprocessing import cpu_count
 bind = 'unix:/path/to/project/quiz.sock'
